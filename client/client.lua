@@ -24,11 +24,14 @@ local function registerPrompts()
     UiPromptRegisterEnd(prompt)
 end
 
-local function isWalking(player)
-    if IsPedRunning(player) or IsPedJumping(player) or IsControlJustReleased(0, Config.Keys["E"]) or IsControlJustReleased(0, Config.Keys["Q"]) then
+local function isWalkingOrStill(player)
+    if IsPedRunning(player)
+        or IsPedJumping(player)
+        or IsControlJustReleased(0, Config.Keys["E"])
+        or IsControlJustReleased(0, Config.Keys["Q"]) then
         return false
     end
-    return true
+    return true -- walking or idle
 end
 
 local function createBlip(blipHash, sprite, scale, x, y, z, name, color)
@@ -173,13 +176,13 @@ function StartJobThread(type, location)
     
     Citizen.CreateThread(function()
         while missionStarted do
-            Citizen.Wait(10)
+            Wait(10)
             local player = PlayerPedId()
             local coords = GetEntityCoords(player)
             if not pickup and #workLoc ~= tasksDone then
                 if #(coords - pickupLoc) < 5  then
                     drawText3D(pickupLoc.x, pickupLoc.y, pickupLoc.z, Config.Language.Press .. " G " .. Config.Language.To .. " " .. job.pickup.label)
-                    if IsControlJustReleased(0, Config.Keys["G"]) then
+                    if IsPedStill(player) and IsControlJustReleased(0, Config.Keys["G"]) then
                         pickup = true
                         cannotRun, prop = job.pickup.run(player)
                         RemoveBlip(missionBlip)
@@ -188,9 +191,11 @@ function StartJobThread(type, location)
                         missionBlip = createBlipForMission(1664425300, -924533810, 0.2, taskLoc.x, taskLoc.y, taskLoc.z, job.workSpot.label, 0x6F85C3CE)
                         Wait(500)
                     end
+                else
+                    Wait(1000)
                 end
             elseif pickup then
-                if cannotRun and not isWalking(player) then
+                if cannotRun and not isWalkingOrStill(player) then
                     Wait(1000)
                     DetachEntity(prop,false,true)
                     ClearPedTasks(player)
@@ -207,7 +212,7 @@ function StartJobThread(type, location)
                 end
                 if #(coords - taskLoc) < 2  then
                     drawText3D(taskLoc.x, taskLoc.y, taskLoc.z, Config.Language.Press .. " G " .. Config.Language.To .. " " .. job.workSpot.label)
-                    if IsControlJustReleased(0, Config.Keys["G"]) then
+                    if IsPedStill(player) and IsControlJustReleased(0, Config.Keys["G"]) then
                         if prop then
                             DetachEntity(prop,false,true)
                             ClearPedTasks(player)
@@ -283,7 +288,7 @@ function SetUp()
                             peds[jobName..locationName] = ped
                         end
                         if dist < 2 and not inMenu then
-                            sleep = 10
+                            sleep = 0
                             local label <const> = VarString(10, "LITERAL_STRING", locationName.." "..jobName)
                             UiPromptSetActiveGroupThisFrame(group, label, 0, 0, 0, 0)
 
@@ -299,8 +304,12 @@ function SetUp()
                             DeletePed(peds[jobName..locationName])
                             peds[jobName..locationName] = nil
                             if props[jobName..locationName] then
-                                SetEntityAsNoLongerNeeded(props[jobName..locationName])
-                                DeleteObject(props[jobName..locationName])
+                                for i = 1, #props[jobName..locationName] do
+                                    if DoesEntityExist(props[jobName..locationName][i]) then
+                                        DeleteObject(props[jobName..locationName][i])
+                                        SetEntityAsNoLongerNeeded(props[jobName..locationName][i])
+                                    end
+                                end
                                 props[jobName..locationName] = nil
                             end
                         end

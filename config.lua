@@ -34,44 +34,41 @@ Config.Jobs = {
                 local coords = GetEntityCoords(ped)
                 local prop = CreateObject("p_hammer01x", coords.x, coords.y, coords.z, true, true, false, false, true)
                 local boneIndex = GetEntityBoneIndexByName(ped, "SKEL_R_Hand")
-                AttachEntityToEntity(prop, ped, boneIndex, 0.06, -0.13, -0.07, 106.8,
-                200.0, 180.0, true, true, false, true, 1, true)
+                AttachEntityToEntity(prop, ped, boneIndex, 0.06, -0.13, -0.07, 106.8, 200.0, 180.0, true, true, false, true, 1, true)
                 RequestAnimDict("amb_work@world_human_hammer@wall@male_a@trans")
                 while not HasAnimDictLoaded("amb_work@world_human_hammer@wall@male_a@trans") do
                     Wait(0)
                 end
                 TaskPlayAnim(ped, "amb_work@world_human_hammer@wall@male_a@trans", "a_trans_kneel_a", 1.0, 1.0, -1, 27, 1.0, false, false, false,'', false)
-                local minigame = exports["syn_minigame"]:taskBar(4000,7)
-                Wait(1000)
-                if minigame == 100 then
-                    minigame = exports["syn_minigame"]:taskBar(3400,7)
+                if MiniGame_WoodBoard == nil then
+                    MiniGame_WoodBoard = exports['bcc-minigames'].initiate()
                 end
-                Wait(1000)
-                if minigame == 100 then
-                    minigame = exports["syn_minigame"]:taskBar(3000,7)
+                MiniGame_WoodBoard_Result = nil
+                local cfg = {
+                    focus = true,
+                    cursor = true,
+                    nails = 15,
+                    type = 'dark-wood'
+                }
+            
+                MiniGame_WoodBoard.Start('hammertime', cfg, function(result)
+                    MiniGame_WoodBoard_Result = result.result or false
+                end)
+                
+                while MiniGame_WoodBoard_Result == nil do
+                    Wait(500)
                 end
-                Wait(1000)
-                if minigame == 100 then
-                    minigame = exports["syn_minigame"]:taskBar(2700,7)
-                end
-                if minigame == 100 then
-                    DetachEntity(prop,false,true)
-                    ClearPedTasks(ped)
-                    DeleteObject(prop)
-                    return true -- skill check passed
-                else
-                    DetachEntity(prop,false,true)
-                    ClearPedTasks(ped)
-                    DeleteObject(prop)
-                    return false -- skill check failed
-                end
+                DetachEntity(prop,false,true)
+                ClearPedTasks(ped)
+                DeleteObject(prop)
+                return MiniGame_WoodBoard_Result
             end,
         },
         pay = {
-            [0] = 12,
-            [10] = 24,
-            [40] = 36,
-            [70] = 48
+            [0] = 15,
+            [20] = 20,
+            [50] = 25,
+            [70] = 30
         },
         locations = {
             ["Blackwater"] = {
@@ -94,29 +91,6 @@ Config.Jobs = {
                     vector3(-826.0, -1280.79, 43.62),
                     vector3(-826.24, -1274.73, 43.58),
                     vector3(-831.8, -1273.06, 43.59),
-                },
-            },
-            ["Rhodes"] = {
-                loc = vector3(1381.16, -1311.44, 77.41),
-                npc = {
-                    enabled = true,
-                    ped = vector4(1381.12, -1311.31, 77.41, 324.11),
-                    model = GetHashKey("a_m_m_bivworker_01"),
-                },
-                blip = {
-                    enabled = true,
-                    style = 1664425300,
-                    scale = 0.2,
-                    sprite = "blip_proc_loanshark",
-                    name = "Construction Job",
-                },
-                pickup = vector3(1391.67, -1308.07, 77.65),
-                workSpot = {
-                    vector3(1398.48, -1290.19, 78.18),
-                    vector3(1429.28, -1302.78, 77.82),
-                    vector3(1381.53, -1289.4, 77.07), 
-                    vector3(1405.7, -1266.74, 78.37),
-                    vector3(1407.55, -1277.34, 78.18),
                 },
             },
             ["Annesburg"] = {
@@ -166,10 +140,10 @@ Config.Jobs = {
                 },
             },
             ["Strawberry"] = {
-                loc = vector3(-1837.17, -418.79, 161.66),
+                loc = vector3(-1838.63, -424.81, 160.78),
                 npc = {
                     enabled = true,
-                    ped = vector4(-1837.17, -418.79, 161.66, 232.22),
+                    ped = vector4(-1838.63, -424.81, 160.78, 232.57),
                     model = GetHashKey("a_m_m_bivworker_01"),
                 },
                 blip = {
@@ -188,11 +162,11 @@ Config.Jobs = {
                     vector3(-1814.69, -423.37, 160.0),
                 },
             },
-            ["Armadillo"] = {
-                loc = vector3(-3690.48, -2633.11, -13.87),
+            ["Sisika"] = {
+                loc = vector3(3380.68, -659.07, 46.76),
                 npc = {
                     enabled = true,
-                    ped = vector4(-3690.48, -2633.11, -13.87, 177.67),
+                    ped = vector4(3380.39, -657.57, 46.76, 212.9),
                     model = GetHashKey("a_m_m_bivworker_01"),
                 },
                 blip = {
@@ -202,20 +176,23 @@ Config.Jobs = {
                     sprite = "blip_proc_loanshark",
                     name = "Construction Job",
                 },
-                pickup = vector3(-3684.86, -2634.88, -13.62),
+                pickup = vector3(3367.73, -655.25, 46.32),
                 workSpot = {
-                    vector3(-3679.37, -2628.03, -13.43),
-                    vector3(-3703.85, -2623.41, -13.24),
-                    vector3(-3693.95, -2600.24, -13.3),
-                    vector3(-3658.93, -2620.84, -13.34),
-                    vector3(-3652.48, -2628.26, -13.82),
+                    vector3(3354.9, -683.06, 44.07),
+                    vector3(3340.86, -702.38, 44.27),
+                    vector3(3332.82, -675.11, 45.53),
+                    vector3(3351.17, -656.75, 45.36),
+                    vector3(3367.39, -645.78, 46.27),
+                    vector3(3381.01, -671.52, 46.25),
+                    vector3(3349.86, -666.79, 45.63),
+
                 },
             },
             ["Tumbleweed"] = {
-                loc = vector3(-5500.17, -2958.25, -0.69),
+                loc = vector3(-5495.16, -2958.5, -0.69),
                 npc = {
                     enabled = true,
-                    ped = vector4(-5500.17, -2958.25, -0.69, 16.65),
+                    ped = vector4(-5495.16, -2958.5, -0.69, 14.07),
                     model = GetHashKey("a_m_m_bivworker_01"),
                 },
                 blip = {
@@ -233,9 +210,31 @@ Config.Jobs = {
                     vector3(-5478.06, -2932.15, -1.25),
                     vector3(-5492.17, -2934.13, -1.13),
                 }, 
-         },
+            },
+            ["Guarma"] = {
+                loc = vector3(1298.52, -6831.73, 43.92),
+                npc = {
+                    enabled = true,
+                    ped = vector4(1298.52, -6831.73, 43.92, 265.34),
+                    model = GetHashKey("a_m_m_bivworker_01"),
+                },
+                blip = {
+                    enabled = true,
+                    style = 1664425300,
+                    scale = 0.2,
+                    sprite = "blip_proc_loanshark",
+                    name = "Construction Job",
+                },
+                pickup = vector3(1289.83, -6841.93, 43.64),
+                workSpot = {
+                    vector3(1285.72, -6840.05, 43.64),
+                    vector3(1304.74, -6838.28, 43.28),
+                    vector3(1307.92, -6831.07, 43.3),
+                    vector3(1290.81, -6846.96, 43.7),
+                }, 
+            },
+        },
     },
-},
     Sweeping = {
         pedSpawing = function(ped) -- this is called to apply any changes to ped
             local model = GetHashKey("p_broom01x")
@@ -244,9 +243,9 @@ Config.Jobs = {
                 Citizen.Wait(10)
             end
             local coords = GetEntityCoords(ped)
-            local prop = CreateObject(model, coords.x, coords.y, coords.z, 1, 0, 1)
+            local prop = CreateObject(model, coords.x, coords.y, coords.z, 0, 0, 0)
             Citizen.InvokeNative(0x6B9BBD38AB0796DF, prop, ped, GetEntityBoneIndexByName(ped,"SKEL_R_Finger12"), 0.49, 0.0, 0.52, 0.0, 225.0, 35.0, true, true, false, true, 1, true)
-            return prop
+            return {prop}
         end,
 
         pickup = {
@@ -290,35 +289,12 @@ Config.Jobs = {
             end,
         },
         pay = {
-            [0] = 12,
-            [10] = 24,
-            [40] = 36,
-            [70] = 48
+            [0] = 15,
+            [10] = 20,
+            [40] = 24,
+            [70] = 32
         },
         locations = {
-            ["Blackwater"] = {
-                loc = vector3(-840.61, -1359.88, 43.5),
-                npc = {
-                    enabled = true,
-                    ped = vector4(-840.61, -1359.88, 43.5, 100.0),
-                    model = GetHashKey("CS_PrincessIsabeau"),
-                },
-                blip = {
-                    enabled = true,
-                    style = 1664425300,
-                    scale = 0.2,
-                    sprite = "blip_proc_loanshark",
-                    name = "Sweeping Job",
-                },
-                pickup = vector3(-840.14, -1348.91, 44.2),
-                workSpot = {
-                    vector3(-869.09, -1331.09, 43.81),
-                    vector3(-853.73, -1359.39, 43.4),
-                    vector3(-854.43, -1375.37, 43.4),
-                    vector3(-843.13, -1373.69, 43.4),
-                    vector3(-806.68, -1325.52, 43.4),
-                },
-            },
             ["SaintDenis"] = {
                 loc = vector3(2852.69, -1210.28, 47.69),
                 npc = {
@@ -365,30 +341,6 @@ Config.Jobs = {
                     vector3(1322.95, -1295.74, 77.0),
                     vector3(1312.22, -1311.06, 76.77),
                     vector3(1348.75, -1287.22, 77.44),
-                },
-            },
-            ["Annesburg"] = {
-                loc = vector3(2955.58, 1317.67, 44.74),
-                npc = {
-                    enabled = true,
-                    ped = vector4(2955.58, 1317.67, 44.74, 249.39),
-                    model = GetHashKey("CS_PrincessIsabeau"),
-                },
-                blip = {
-                    enabled = true,
-                    style = 1664425300,
-                    scale = 0.2,
-                    sprite = "blip_proc_loanshark",
-                    name = "Sweeping Job",
-                },
-                pickup = vector3(2943.64, 1314.27, 44.48),
-                workSpot = {
-                    vector3(2958.82, 1300.7, 44.5),
-                    vector3(2940.14, 1295.54, 44.76),
-                    vector3(2925.66, 1280.7, 44.63),
-                    vector3(2954.04, 1339.8, 44.87),
-                    vector3(2917.72, 1323.81, 44.46),
-                    vector3(2926.43, 1347.56, 44.44),
                 },
             },
             ["Valentine"] = {
@@ -438,54 +390,7 @@ Config.Jobs = {
                     vector3(-1781.18, -373.39, 159.91), 
                 },
             },
-            ["Armadillo"] = {
-                loc = vector3(-3704.18, -2623.54, -13.24),
-                npc = {
-                    enabled = true,
-                    ped = vector4(-3704.18, -2623.54, -13.24, 43.27),
-                    model = GetHashKey("CS_PrincessIsabeau"),
-                },
-                blip = {
-                    enabled = true,
-                    style = 1664425300,
-                    scale = 0.2,
-                    sprite = "blip_proc_loanshark",
-                    name = "Sweeping Job",
-                },
-                pickup = vector3(-1761.47, -394.53, 156.26),
-                workSpot = {
-                    vector3(-3695.21, -2630.58, -13.83),
-                    vector3(-3730.42, -2617.58, -13.28),
-                    vector3(-3711.31, -2594.73, -13.3),
-                    vector3(-3684.21, -2620.36, -13.45),
-                    vector3(-3660.79, -2601.76, -13.29),
-                },
-            },
-            ["Tumbleweed"] = {
-                loc = vector3(-5517.15, -2962.35, -0.8),
-                npc = {
-                    enabled = true,
-                    ped = vector4(-5517.15, -2962.35, -0.8, 17.11),
-                    model = GetHashKey("CS_PrincessIsabeau"),
-                },
-                blip = {
-                    enabled = true,
-                    style = 1664425300,
-                    scale = 0.2,
-                    sprite = "blip_proc_loanshark",
-                    name = "Sweeping Job",
-                },
-                pickup = vector3(-5519.59, -2954.65, -1.65),
-                workSpot = {
-                    vector3(-5495.19, -2936.84, -0.45),
-                    vector3(-5494.31, -2958.36, -0.71),
-                    vector3(-5527.11, -2952.89, -0.71),
-                    vector3(-5508.73, -2960.02, -0.67),
-                    vector3(-5538.82, -2955.84, -0.73),
-                    vector3(-5520.51, -2912.17, -1.74),
-                },
-            },
-        }
+        },
     }
 }
 
