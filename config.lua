@@ -85,12 +85,12 @@ Config.Jobs = {
                     sprite = "blip_proc_loanshark",
                     name = "Construction Job",
                 },
-                pickup = vector3(-843.59, -1260.99, 43.54),
+                pickup = vector3(-878.68, -1301.51, 43.12),
                 workSpot = {
-                    vector3(-832.2, -1276.19, 43.66),
-                    vector3(-826.0, -1280.79, 43.62),
-                    vector3(-826.24, -1274.73, 43.58),
-                    vector3(-831.8, -1273.06, 43.59),
+                    vector3(-877.46, -1312.89, 42.99),
+                    vector3(-866.78, -1293.79, 43.1),
+                    vector3(-875.51, -1302.94, 43.02),
+                    vector3(-857.84, -1293.52, 43.28),
                 },
             },
             ["Annesburg"] = {
