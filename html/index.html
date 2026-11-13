@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ez_actionjobs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app" class="hidden">
+    <section id="window" class="window">
+        <div class="window__bg"></div>
+        <div class="window__smudge"></div>
+        <div class="window__inner">
+            <header class="header">
+                <div class="header__title"><h1 id="title"></h1></div>
+                <p id="hint" class="hint"></p>
+            </header>
+            <div class="divider"></div>
+
+            <div id="stage" class="stage">
+                <div class="post post--left"></div>
+                <div class="post post--right"></div>
+                <div id="nails" class="nails"></div>
+                <div id="plank" class="plank wood-dark">
+                    <div class="plank__grain"></div>
+                    <div class="plank__knot" style="left: 14%; top: 38%"></div>
+                    <div class="plank__knot plank__knot--small" style="left: 63%; top: 62%"></div>
+                    <div class="plank__knot plank__knot--small" style="left: 86%; top: 30%"></div>
+                </div>
+                <div id="ringTarget" class="ring ring--target hidden"></div>
+                <div id="ringApproach" class="ring ring--approach hidden"></div>
+                <div id="fx" class="fx"></div>
+                <div id="banner" class="banner hidden"><span id="bannerText"></span></div>
+            </div>
+
+            <div class="divider"></div>
+            <footer class="hud">
+                <div class="hud__group">
+                    <span id="labelNails" class="hud__label"></span>
+                    <div id="nailPips" class="pips"></div>
+                </div>
+                <div id="timer" class="timer off"><div id="timerFill" class="timer__fill"></div></div>
+                <div class="hud__group hud__group--right">
+                    <span id="labelBent" class="hud__label"></span>
+                    <div id="bentPips" class="pips"></div>
+                </div>
+            </footer>
+            <div class="keys">
+                <span class="key">LMB</span><span id="keyStrike"></span>
+                <span class="key">ESC</span><span id="keyGiveUp"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Follows the mouse. The bottom of the hammer's face (35, 92) is the point that strikes -->
+    <div id="hammer" class="hammer">
+        <svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="hWood" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#a87447"/>
+                    <stop offset="0.45" stop-color="#7d5130"/>
+                    <stop offset="1" stop-color="#4a2e18"/>
+                </linearGradient>
+                <linearGradient id="hSteel" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stop-color="#3c3f45"/>
+                    <stop offset="0.35" stop-color="#b9bdc4"/>
+                    <stop offset="0.6" stop-color="#80848b"/>
+                    <stop offset="1" stop-color="#2e3035"/>
+                </linearGradient>
+                <linearGradient id="hFace" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#9da1a8"/>
+                    <stop offset="1" stop-color="#4b4e54"/>
+                </linearGradient>
+            </defs>
+            <!-- handle -->
+            <rect x="44" y="48" width="112" height="14" rx="6" fill="url(#hWood)"/>
+            <path d="M60 52 H150 M66 57 H146" stroke="#3b2414" stroke-opacity="0.35" stroke-width="1"/>
+            <!-- grip wrap -->
+            <g fill="#2a1a10" fill-opacity="0.85">
+                <rect x="118" y="47" width="4" height="16" rx="1.5"/>
+                <rect x="126" y="47" width="4" height="16" rx="1.5"/>
+                <rect x="134" y="47" width="4" height="16" rx="1.5"/>
+                <rect x="142" y="47" width="4" height="16" rx="1.5"/>
+            </g>
+            <!-- claw -->
+            <path d="M22 26 C24 8 42 1 66 3 L64 10 C46 10 38 16 36 28 Z" fill="url(#hSteel)"/>
+            <!-- head -->
+            <rect x="20" y="20" width="30" height="62" rx="3" fill="url(#hSteel)"/>
+            <rect x="46" y="44" width="8" height="22" rx="1.5" fill="#26282c"/>
+            <!-- striking face -->
+            <rect x="16" y="78" width="38" height="14" rx="2.5" fill="url(#hFace)"/>
+            <rect x="16" y="78" width="38" height="3" fill="#ffffff" fill-opacity="0.25"/>
+        </svg>
+    </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

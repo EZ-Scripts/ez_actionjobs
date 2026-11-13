@@ -1,1 +1,0 @@
-ALTER TABLE `characters` ADD COLUMN `trust` JSON NULL DEFAULT '{}';
